@@ -4,12 +4,16 @@ import com.google.gson.JsonObject;
 import main.ApplicationContext;
 import model.Player;
 import network.handlers.PacketHandlerAuth;
+import network.handlers.PacketHandlerEjectMass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.jetbrains.annotations.NotNull;
 import protocol.CommandAuth;
+import protocol.CommandEjectMass;
+import protocol.CommandMove;
+import protocol.CommandSplit;
 import utils.JSONHelper;
 
 import java.util.Map;
@@ -58,6 +62,16 @@ public class ClientConnectionHandler extends WebSocketAdapter {
       case CommandAuth.NAME:
         new PacketHandlerAuth(getSession(), msg);
         break;
+      case CommandEjectMass.NAME:
+        new PacketHandlerEjectMass(getSession(), msg);
+        break;
+      case CommandMove.NAME:
+        new PacketHandlerEjectMass(getSession(), msg);
+        break;
+      case CommandSplit.NAME:
+        new PacketHandlerEjectMass(getSession(), msg);
+        break;
+
     }
   }
 }

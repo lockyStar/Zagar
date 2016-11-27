@@ -1,6 +1,9 @@
 package model;
 
 import main.ApplicationContext;
+import network.ClientConnectionHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import utils.IDGenerator;
 import utils.SequentialIDGenerator;
@@ -12,6 +15,8 @@ import java.util.List;
  * @author apomosov
  */
 public class Player {
+  private final static @NotNull Logger log = LogManager.getLogger(ClientConnectionHandler.class);
+
   public static final IDGenerator idGenerator = new SequentialIDGenerator();
   private final int id;
   @NotNull
@@ -49,6 +54,18 @@ public class Player {
 
   public int getId() {
     return id;
+  }
+
+  public void move(float dx, float dy){
+  log.info(this + " was moved on " + dx + " " + dy);
+  }
+
+  public void ejectMass(){
+    log.info(this + " ejected mass");
+  }
+
+  public void split(){
+    log.info(this + " was splited");
   }
 
   @NotNull
