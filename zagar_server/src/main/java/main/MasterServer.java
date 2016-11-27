@@ -16,35 +16,68 @@ import ticker.Ticker;
 import utils.IDGenerator;
 import utils.SequentialIDGenerator;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-
+import java.io.FileInputStream;
 /**
  * Created by apomosov on 14.05.16.
  */
 public class MasterServer {
   @NotNull
   private final static Logger log = LogManager.getLogger(MasterServer.class);
+  private static int accountServerPort;
+  private static int clientConnectionPort;
+  private static String replicatorName;
+  private static String matchmakerName;
 
   private void start() throws ExecutionException, InterruptedException {
     log.info("MasterServer started");
     //TODO RK3 configure server parameters
-    ApplicationContext.instance().put(MatchMaker.class, new MatchMakerImpl());
-    ApplicationContext.instance().put(ClientConnections.class, new ClientConnections());
-    ApplicationContext.instance().put(Replicator.class, new FullStateReplicator());
-    ApplicationContext.instance().put(IDGenerator.class, new SequentialIDGenerator());
+    Properties props = new Properties();
+    try {
+      props.load(new FileInputStream(new File("src/main/resources/init.properties")));
+      accountServerPort = Integer.valueOf(props.getProperty("accountServerPort"));
+      clientConnectionPort = Integer.valueOf(props.getProperty("clientConnectionPort"));
+      replicatorName = props.getProperty("replicator");
+      matchmakerName = props.getProperty("matchMaker");
+      ApplicationContext.instance().put(Replicator.class, Class.forName(replicatorName).newInstance());
+      ApplicationContext.instance().put(MatchMaker.class, Class.forName(matchmakerName).newInstance());
+      ApplicationContext.instance().put(ClientConnections.class, new ClientConnections());
+      ApplicationContext.instance().put(IDGenerator.class, new SequentialIDGenerator());
 
-    MessageSystem messageSystem = new MessageSystem();
-    ApplicationContext.instance().put(MessageSystem.class, messageSystem);
+      String[] services = props.getProperty("services").split(",");
 
-    Mechanics mechanics = new Mechanics();
+      MessageSystem messageSystem = new MessageSystem();
+      ApplicationContext.instance().put(MessageSystem.class, messageSystem);
 
-    messageSystem.registerService(Mechanics.class, mechanics);
-    messageSystem.registerService(AccountServer.class, new AccountServer(8080));
-    messageSystem.registerService(ClientConnectionServer.class, new ClientConnectionServer(7000));
-    messageSystem.getServices().forEach(Service::start);
+      Constructor constrAccSer = Class.forName(services[1]).getConstructor(Integer.class);
+      Constructor constrCliConSer = Class.forName(services[2]).getConstructor(Integer.class);
 
-    for (Service service : messageSystem.getServices()) {
-      service.join();
+      messageSystem.registerService(Class.forName(services[0]), (Service) Class.forName(services[0]).newInstance());
+      messageSystem.registerService(Class.forName(services[1]), (Service) constrAccSer.newInstance(accountServerPort));
+      messageSystem.registerService(Class.forName(services[2]),(Service) constrCliConSer.newInstance(clientConnectionPort));
+      messageSystem.getServices().forEach(Service::start);
+
+      for (Service service : messageSystem.getServices()) {
+        service.join();
+      }
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (InstantiationException e) {
+      e.printStackTrace();
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    } catch (NoSuchMethodException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      e.printStackTrace();
     }
   }
 
