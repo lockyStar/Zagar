@@ -24,29 +24,19 @@ public class MoveMsg extends Message {
     private final float dx;
     private final float dy;
     @NotNull
-    private final int playerId;
+    private final Player player;
 
 
-    public MoveMsg(float dx, float dy, @NotNull int playerId) {
+    public MoveMsg(float dx, float dy, @NotNull Player player) {
         super(ApplicationContext.instance().get(MessageSystem.class).getService(ClientConnectionServer.class).getAddress(), ApplicationContext.instance().get(MessageSystem.class).getService(Mechanics.class).getAddress());
         this.dx = dx;
         this.dy = dy;
-        this.playerId = playerId;
+        this.player = player;
     }
 
     @Override
     public void exec(Abonent abonent) {
-        //ApplicationContext.instance().get(Player.class).move(dx, dy);
-        List<GameSession> activeGameSessions =  ApplicationContext.instance().get(MatchMaker.class).getActiveGameSessions();
-        for (GameSession session: activeGameSessions){
-            List<Player> players = session.getPlayers();
-            for (Player player: players){
-                if (player.getId() == playerId){
-                    player.move(dx, dy);
-                    return;
-                }
-            }
-        }
+        player.move(dx,dy);
     }
 
 }

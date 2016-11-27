@@ -18,26 +18,17 @@ import java.util.List;
  */
 public class SplitMsg extends Message {
     @NotNull
-    private final int playerId;
+    private final Player player;
 
 
-    public SplitMsg(@NotNull int playerId) {
+    public SplitMsg(@NotNull Player player) {
         super(ApplicationContext.instance().get(MessageSystem.class).getService(ClientConnectionServer.class).getAddress(), ApplicationContext.instance().get(MessageSystem.class).getService(Mechanics.class).getAddress());
-        this.playerId = playerId;
+        this.player = player;
     }
 
 
     @Override
     public void exec(Abonent abonent) {
-        List<GameSession> activeGameSessions =  ApplicationContext.instance().get(MatchMaker.class).getActiveGameSessions();
-        for (GameSession session: activeGameSessions){
-            List<Player> players = session.getPlayers();
-            for (Player player: players){
-                if (player.getId() == playerId){
-                    player.split();
-                    return;
-                }
-            }
-        }
+        player.split();
     }
 }

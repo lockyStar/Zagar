@@ -29,20 +29,20 @@ public class PacketHandlerEjectMass {
       return;
     }
 
-    int playerId = -1;
+    Player player = null;
 
     ClientConnections clientConnections = ApplicationContext.instance().get(ClientConnections.class);
     for (Map.Entry<Player, Session> connection : clientConnections.getConnections()) {
       if(connection.getValue().equals(session)){
-        playerId = connection.getKey().getId();
+        player = connection.getKey();
         break;
       }
     }
-    if (playerId == -1){
+    if (player == null){
       return;
     }
     @NotNull MessageSystem messageSystem = ApplicationContext.instance().get(MessageSystem.class);
-    Message message = new EjectMassMsg(playerId);
+    Message message = new EjectMassMsg(player);
     messageSystem.sendMessage(message);
 
   }
