@@ -1,2 +1,1 @@
-SashaNumberOne 1337
-SuperPashezik 1969
+{"leaderBoard":["SashaNumberOne 1337","SuperPashezik 1969",null,null,null,null,null,null,null,null],"command":"leader_board"}

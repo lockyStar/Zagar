@@ -29,7 +29,6 @@ public class ConstantReplicator implements Replicator {
         String msg = "";
         try {
             in = new FileInputStream("src/main/resources/replicateinput.txt");
-
             int content;
             while ((content = in.read()) != -1) {
                 msg = msg + (char) content;
