@@ -1,5 +1,6 @@
 package main;
 
+import leaderboard.LdrBrdMaker;
 import matchmaker.MatchMaker;
 import messageSystem.MessageSystem;
 import network.ClientConnections;
@@ -41,6 +42,7 @@ public class MasterServer {
       matchmakerName = props.getProperty("matchMaker");
       ApplicationContext.instance().put(Replicator.class, Class.forName(replicatorName).newInstance());
       ApplicationContext.instance().put(MatchMaker.class, Class.forName(matchmakerName).newInstance());
+      ApplicationContext.instance().put(LdrBrdMaker.class, Class.forName("leaderboard.ConstantLBMaker").newInstance());
       ApplicationContext.instance().put(ClientConnections.class, new ClientConnections());
       ApplicationContext.instance().put(IDGenerator.class, new SequentialIDGenerator());
 

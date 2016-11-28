@@ -28,12 +28,13 @@ public class ConstantReplicator implements Replicator {
         FileInputStream in = null;
         String msg = "";
         try {
-            in = new FileInputStream("input.txt");
+            in = new FileInputStream("src/main/java/replication/input.txt");
 
             int content;
             while ((content = in.read()) != -1) {
                 msg = msg + (char) content;
             }
+            System.out.println(msg);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

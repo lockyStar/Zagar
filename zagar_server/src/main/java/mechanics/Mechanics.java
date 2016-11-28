@@ -6,6 +6,7 @@ import main.Service;
 import messageSystem.Abonent;
 import messageSystem.Message;
 import messageSystem.MessageSystem;
+import messageSystem.messages.LeaderboardMsg;
 import messageSystem.messages.ReplicateMsg;
 import network.ClientConnectionServer;
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +48,9 @@ public class Mechanics extends Service implements Tickable {
     @NotNull MessageSystem messageSystem = ApplicationContext.instance().get(MessageSystem.class);
     Message message = new ReplicateMsg(this.getAddress());
     messageSystem.sendMessage(message);
-
+    log.info("Start making leaderboard");
+    Message lbmessage = new LeaderboardMsg(this.getAddress());
+    messageSystem.sendMessage(lbmessage);
     //execute all messages from queue
     messageSystem.execForService(this);
   }
