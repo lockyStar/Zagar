@@ -1,6 +1,6 @@
 package leaderboard;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 
 import main.ApplicationContext;
@@ -17,7 +17,21 @@ public class ConstantLBMaker implements LdrBrdMaker {
     @Override
     public void makeLB() throws IOException {
         String[] leaderboard = new String[10];
-        leaderboard[0] = "SashaNumberOne --- 1337";
+        try (InputStream in = new FileInputStream(new File("src/main/resources/leaderboardinput.txt"));
+             BufferedReader reader = new BufferedReader(new InputStreamReader(in))
+        ) {
+            int i = 0;
+            StringBuilder out = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                out.append(line);
+                leaderboard[i] = line;
+                System.out.println(leaderboard[i]);
+                i++;
+            }
+
+        }
+
 
         for (GameSession gameSession : ApplicationContext.instance().get(MatchMaker.class).getActiveGameSessions()) {
             for (Map.Entry<Player, Session> connection : ApplicationContext.instance().get(ClientConnections.class).getConnections()) {
